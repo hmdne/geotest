@@ -163,13 +163,10 @@ class Interscript::GeoTest
           next
         end
         compiler = Interscript.load(map_id, maps, compiler: Interscript::Compiler::Ruby)
-        result_fnro = compiler.(original.full_name_ro)
-        result_fnrg = compiler.(original.full_name_rg)
+        result_fn = compiler.(original.full_name)
 
-        if error = compare_and_return_error(result_fnro, i.full_name_ro)
-          results[transl] << {error: error, group: group, result: [result_fnro, result_fnrg]}
-        elsif error = compare_and_return_error(result_fnrg, i.full_name_rg)
-          results[transl] << {error: error, group: group, result: [result_fnro, result_fnrg]}
+        if error = compare_and_return_error(result_fn, i.full_name)
+          results[transl] << {error: error, group: group, result: result_fn}
         else
           results[transl] << {ok: true, group: group}
         end
@@ -216,9 +213,11 @@ class Interscript::GeoTest
   end
 
   class Name
-    FIELDS=%i[ufi uni mgrs nt lc full_name_ro full_name_rg name_link transl_cd]
+    FIELDS=%i[ufi uni mgrs nt lang_cd full_name name_link transl_cd]
     INT_FIELDS=%i[ufi uni name_link]
     attr_accessor *FIELDS
+
+    alias lc lang_cd
 
     def initialize(geotest, **kwargs)
       @geotest = geotest
